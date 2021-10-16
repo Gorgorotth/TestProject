@@ -102,6 +102,11 @@ class FileController extends Controller
         }
 
     }
+
+    public function delete($id) {
+      $file = File::query()->firstWhere('id', $id);
+        $file->delete();
+    }
 //
 //    public function update(FileUpdateRequest $request, $id)
 //    {

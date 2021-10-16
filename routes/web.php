@@ -19,6 +19,8 @@ Route::post('file/store', [FileController::class, 'store'])->middleware('auth')-
 
 Route::get('file/edit/{id}', [FileController::class, 'edit'])->middleware('auth')->name('file.edit');
 
+Route::get('file/delete/{id}', [FileController::class, 'delete'])->middleware('auth')->name('file.delete');
+
 //Route::post('file/update/{id}', [FileController::class, 'update'])->middleware('auth')->name('file.update');
 
 Route::post('zip/setPassword/{id}', [FileController::class, 'storePassword'])->middleware('auth')->name('zip.setPassword');

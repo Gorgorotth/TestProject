@@ -18,6 +18,7 @@ class CreateFilesTable extends Migration
             $table->foreignId('user_id');
             $table->string('name');
             $table->boolean('zipped')->default(false);
+            $table->dateTime('deleted_at')->nullable();
             $table->timestamps();
         });
     }

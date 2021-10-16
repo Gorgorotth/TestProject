@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class File extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
 
     protected $fillable = [
         'name',

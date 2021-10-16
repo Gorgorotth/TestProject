@@ -18,7 +18,7 @@
 
                     <a  class="mx-6  hover:text-blue-400" href="{{route('file.edit', ['id' => $file->id])}}">Edit</a><br>
 
-                    <a class="mx-6  hover:text-blue-400" href="">Delete</a><br>
+                    <a class="mx-6  hover:text-blue-400" href="{{route('file.delete', ['id' => $file->id])}}">Delete</a><br>
 
 {{--                    <a class="mx-2  hover:text-blue-400" href="{{route('delete.file', ['slug' => $post->slug])}}">Delete</a><br>--}}
 
