@@ -3,14 +3,14 @@
 namespace App\Listeners;
 
 use App\Events\FileCreated;
-use App\Models\File;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use League\Flysystem\Filesystem;
 use League\Flysystem\ZipArchive\ZipArchiveAdapter;
 
 class ZipFile implements ShouldQueue
 {
+    use Queueable;
     /**
      * Create the event listener.
      *

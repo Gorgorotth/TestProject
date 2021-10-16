@@ -8,7 +8,12 @@ use Illuminate\Http\Request;
 class LoginController extends Controller
 {
     public function index() {
-        return view('index');
+        if (auth()->user()){
+            return redirect('file');
+        }
+        else {
+            return view('index');
+        }
     }
 
     public function store(LoginStoreRequest $request) {

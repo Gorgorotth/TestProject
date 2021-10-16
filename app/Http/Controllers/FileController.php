@@ -41,6 +41,7 @@ class FileController extends Controller
 
         Storage::disk('files')->put($filename, $request->file('file')->getContent());
 
+
         File::query()->create([
             'user_id' => auth()->id(),
             'name' => $path,
@@ -99,13 +100,18 @@ class FileController extends Controller
             header("Content-Transfer-Encoding: binary");
 
             readfile($zip_file);
+
+
         }
 
     }
 
     public function delete($id) {
       $file = File::query()->firstWhere('id', $id);
+
         $file->delete();
+
+        return back();
     }
 //
 //    public function update(FileUpdateRequest $request, $id)
