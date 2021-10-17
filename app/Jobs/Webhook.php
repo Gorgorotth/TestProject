@@ -38,15 +38,6 @@ class Webhook implements ShouldQueue
 </Envelope>
 ';
     }
-    public function typeJson(){
-       $path = storage_path('app/public/archive/' . '$file->name');
-
-      return $body = '
-       "scripts": {
-  "server": "json-server --watch db.json"
-}
-       ';
-    }
     /**
      * Execute the job.
      *

@@ -13,10 +13,10 @@ class FileObserver
     /**
      * Handle the User "created" event.
      *
-     * @param  \App\Models\User  $file
+     * @param \App\Models\User $file
      * @return void
      */
-    public function creating (File $file)
+    public function creating(File $file)
     {
 
     }
@@ -24,7 +24,7 @@ class FileObserver
     /**
      * Handle the User "created" event.
      *
-     * @param  \App\Models\User  $file
+     * @param \App\Models\User $file
      * @return void
      */
     public function created(File $file)
@@ -36,7 +36,7 @@ class FileObserver
     /**
      * Handle the User "updated" event.
      *
-     * @param  \App\Models\User  $file
+     * @param \App\Models\User $file
      * @return void
      */
     public function updated(File $file)
@@ -47,7 +47,7 @@ class FileObserver
     /**
      * Handle the User "deleted" event.
      *
-     * @param  \App\Models\User  $file
+     * @param \App\Models\User $file
      * @return void
      */
     public function deleted(File $file)
@@ -58,7 +58,7 @@ class FileObserver
     /**
      * Handle the User "restored" event.
      *
-     * @param  \App\Models\User  $file
+     * @param \App\Models\User $file
      * @return void
      */
     public function restored(File $file)
@@ -69,7 +69,7 @@ class FileObserver
     /**
      * Handle the User "force deleted" event.
      *
-     * @param  \App\Models\User  $file
+     * @param \App\Models\User $file
      * @return void
      */
     public function forceDeleted(File $file)

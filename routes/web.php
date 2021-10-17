@@ -17,11 +17,13 @@ Route::get('file/create', [FileController::class, 'create'])->middleware('auth')
 
 Route::post('file/store', [FileController::class, 'store'])->middleware('auth')->name('file.add');
 
-Route::get('file/edit/{id}', [FileController::class, 'edit'])->middleware('auth')->name('file.edit');
+Route::get('zip/edit/{id}', [FileController::class, 'edit'])->middleware('auth')->name('zip.edit');
+
+Route::get('file/edit/{id}', [FileController::class, 'editFile'])->middleware('auth')->name('file.edit');
 
 Route::get('file/delete/{id}', [FileController::class, 'delete'])->middleware('auth')->name('file.delete');
 
-//Route::post('file/update/{id}', [FileController::class, 'update'])->middleware('auth')->name('file.update');
+Route::post('file/update/{id}', [FileController::class, 'update'])->middleware('auth')->name('file.update');
 
 Route::post('zip/setPassword/{id}', [FileController::class, 'storePassword'])->middleware('auth')->name('zip.setPassword');
 

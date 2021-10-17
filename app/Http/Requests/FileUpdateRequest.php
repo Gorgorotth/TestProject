@@ -15,7 +15,7 @@ class FileUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'fileName' => ['min:3', 'max:20', 'required'],
+            'name' => ['min:3', 'max:20', 'required'],
         ];
     }
 }

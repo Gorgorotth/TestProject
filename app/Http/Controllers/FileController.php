@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FileStoreRequest;
+use App\Http\Requests\FileUpdateRequest;
 use App\Http\Requests\ZipStorePasswordRequest;
 use App\Models\File;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
@@ -54,6 +54,14 @@ class FileController extends Controller
         ]);
     }
 
+    public function editFile($id)
+    {
+        $file = File::query()->firstWhere('id', $id);
+        return view('file.edit', [
+            'file' => $file
+        ]);
+    }
+
     public function storePassword(ZipStorePasswordRequest $request, $id)
     {
         $password = $request->password;
@@ -67,9 +75,9 @@ class FileController extends Controller
 
         if ($zip_status === true) {
 
-                $zip->setEncryptionName($file->name, ZipArchive::EM_AES_256, $password);
+            $zip->setEncryptionName($file->name, ZipArchive::EM_AES_256, $password);
 
-                    $zip->close();
+            $zip->close();
 
 
         } else {
@@ -102,37 +110,35 @@ class FileController extends Controller
 
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
 
-        $con = require config_path('webhook.php');
+        $file = File::query()->firstWhere('id', $id);
 
+        $file->delete();
 
-
-
-//      $file = File::query()->firstWhere('id', $id);
-//
-//        $file->delete();
-//
-//        return back();
+        return back();
     }
-//
-//    public function update(FileUpdateRequest $request, $id)
-//    {
-//        if ($fileName = $request->fileName) {
-//            dd($fileName);
-//            Storage::disk('files')->move($fileName);
-//            File::query()->firstWhere('id', $id)->update([
-//                'name' => $request['fileName'],
-//            ]);
-//        }
-//        return redirect('file');
-//
-//    }
-//
-//    public function destroy()
-//    {
-//
-//    }
 
+//
+    public function update(FileUpdateRequest $request, $id)
+    {
+        $file = File::query()->firstWhere('id', $id);
+
+        $extension = pathinfo($file->name, PATHINFO_EXTENSION);
+
+        if ($fileName = $request->name) {
+
+            Storage::disk('files')->move($file->name, $fileName . '.' . $extension);
+
+            Storage::disk('archives')->move($file->name . '.zip', $fileName . '.zip');
+
+            $file->update([
+                'name' => $fileName,
+            ]);
+        }
+        return redirect('file');
+
+    }
 
 }
