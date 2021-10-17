@@ -48,7 +48,7 @@ class DeleteFiles extends Command
 
                 Storage::disk('files')->delete($file->name);
 
-                Storage::disk('archives')->delete($file->name . '.zip');
+                Storage::disk('archives')->delete($file->name . $file->zip_folder);
 
 
             }

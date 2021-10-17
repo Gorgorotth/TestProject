@@ -43,18 +43,20 @@ class FileController extends Controller
             'name' => $path,
         ]);
 
-        return redirect('file');
+        return redirect('/file')->with('success', 'You added new file');
     }
 
 
     public function edit($id)
     {
+        $file = File::query()->firstWhere('id', $id);
         return view('file.edit-zip', [
-            'id' => $id
+            'id' => $id,
+            'file' => $file,
         ]);
     }
 
-    public function editFile($id)
+    public function edit_file($id)
     {
         $file = File::query()->firstWhere('id', $id);
         return view('file.edit', [
@@ -62,44 +64,48 @@ class FileController extends Controller
         ]);
     }
 
-    public function storePassword(ZipStorePasswordRequest $request, $id)
+    public function store_password(ZipStorePasswordRequest $request, $id)
     {
         $password = $request->password;
         $file = File::query()->firstWhere('id', $id);
         $zip = new ZipArchive();
-        $zip_file = storage_path('app/public/archive/' . $file->name . '.zip');
+        $zip_file = storage_path('app/public/' . $file->name . $file->zip_folder);
 
-        $zip_status = $zip->open($zip_file, ZipArchive::CREATE);
-        $zip->setPassword($password);
+            $zip_status = $zip->open($zip_file, ZipArchive::CREATE);
 
-
-        if ($zip_status === true) {
-
-            $zip->setEncryptionName($file->name, ZipArchive::EM_AES_256, $password);
-
-            $zip->close();
+            $zip->setPassword($password);
 
 
-        } else {
-            die("Failed opening archive: " . @$zip->getStatusString() . " (code: " . $zip_status . ")");
-        }
+            if ($zip_status === true) {
+
+                $zip->setEncryptionName($file->name, ZipArchive::EM_AES_256, $password);
+
+                $zip->close();
+
+
+                return redirect('/file')->with('success', 'You added a password');
+            } else {
+
+                die("Failed opening archive: " . @$zip->getStatusString() . " (code: " . $zip_status . ")");
+
+            }
+
     }
 
     public function download($id)
     {
         $file = File::query()->firstWhere('id', $id);
 
-        $zip_file = storage_path('app/public/archive/' . $file->name . '.zip');
-
+        $zip_file = storage_path('app/public/' . $file->name . $file->zip_folder);
         if (!file_exists($zip_file)) {
 
-            die('file not found');
+            return redirect('/file')->with('error','file not found');
 
         } else {
 
             header("Cache-Control: public");
             header("Content-Description: File Transfer");
-            header("Content-Disposition: attachment; filename=$zip_file");
+            header("Content-Disposition: attachment; filename=$file->name$file->zip_folder");
             header("Content-Type: application/zip");
             header("Content-Transfer-Encoding: binary");
 
@@ -117,10 +123,10 @@ class FileController extends Controller
 
         $file->delete();
 
-        return back();
+        return back()->with('success', 'File is deleted');
     }
 
-//
+
     public function update(FileUpdateRequest $request, $id)
     {
         $file = File::query()->firstWhere('id', $id);
@@ -131,13 +137,13 @@ class FileController extends Controller
 
             Storage::disk('files')->move($file->name, $fileName . '.' . $extension);
 
-            Storage::disk('archives')->move($file->name . '.zip', $fileName . '.zip');
+            Storage::disk('archives')->move($file->name . $file->zip_folder, $fileName . $extension . $file->zip_folder);
 
             $file->update([
-                'name' => $fileName,
+                'name' => $fileName . '.' . $extension,
             ]);
         }
-        return redirect('file');
+        return redirect('/file')->with('success', 'You renamed a file');
 
     }
 

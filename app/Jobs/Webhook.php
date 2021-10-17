@@ -25,19 +25,22 @@ class Webhook implements ShouldQueue
     {
         //
     }
-    public function typeXml($file){
 
-        $path = storage_path('app/public/archive/' . $file->name);
-       return '
+    public function typeXml($file)
+    {
+
+        $path = $file->file_path;
+        return '
 <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
     <Body>
         <FileUrl>
-            '. $path .'
+            ' . $path . '
         </FileUrl>
     </Body>
 </Envelope>
 ';
     }
+
     /**
      * Execute the job.
      *
@@ -47,41 +50,49 @@ class Webhook implements ShouldQueue
     {
         $file = $event->file;
 
-        $config = require config_path('webhook.php');
+        $config = config('webhook');
 
         $environment = env('APP_ENV');
 
-        if ($environment == 'local' || $environment == 'production'){
+        if ($environment == 'local' || $environment == 'production') {
 
-            $type = $config[$environment]['type'];
+            $type = $config['payload_type'];
 
-            if ($type == 'json'){
+            $endpoints = $config[$environment]['endpoints'];
 
-                $headers = [
-
-                    'Content-Type' => 'text/json; charset=UTF8'
-
-                ];
-                $body = storage_path('app/public/archive/' . $file->name);
-
-            }elseif ($type == 'xml') {
-
+            if ($type == 'xml') {
                 $headers = [
 
                     'Content-Type' => 'text/xml; charset=UTF8'
 
                 ];
                 $body = $this->typeXml($file);
+
+                foreach ($endpoints as $url) {
+
+                    Http::withHeaders($headers)->post($url, [
+
+                        'body' => $body
+
+                    ]);
+                }
+            } elseif ($type == 'json') {
+                $headers = [
+
+                    'Content-Type' => 'application/json; charset=UTF8'
+
+                ];
+                $body = $file->file_path;
+
+                foreach ($endpoints as $url) {
+
+                    Http::withHeaders($headers)->post($url, [
+
+                        'file_url' => $body
+
+                    ]);
+                }
             }
-            $endpoints = $config[$environment]['endpoints'];
-
-            foreach ($endpoints as $url){
-
-            Http::withHeaders($headers)->post($url, [
-
-                'body' => $body
-            ]);
-        }
         }
 
 

@@ -9,7 +9,7 @@ class LoginController extends Controller
 {
     public function index() {
         if (auth()->user()){
-            return redirect('file');
+            return redirect('/file');
         }
         else {
             return view('index');
@@ -22,12 +22,11 @@ class LoginController extends Controller
             return back()->withInput()->withErrors(['password' => 'Wrong email or password']);
         }
 
-        return redirect('/file');
-//            ->with('success', 'Logged in successfully');
+        return redirect('/file')->with('success', 'Logged in successfully');
 
     }
     public function destroy() {
         auth()->logout();
-        return redirect('/');
+        return redirect('/')->with('success', 'Logged out');
     }
 }

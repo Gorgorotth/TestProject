@@ -15,4 +15,5 @@
 
     </form>
 </div>
+    <x-session />
 </x-layout>

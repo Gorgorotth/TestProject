@@ -27,4 +27,9 @@ class File extends Model
         return Storage::disk('files')->url($this->name);
     }
 
+    public function getZipFolderAttribute()
+    {
+        return '.zip';
+    }
+
 }

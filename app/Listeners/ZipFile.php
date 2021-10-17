@@ -31,7 +31,8 @@ class ZipFile implements ShouldQueue
     {
         $file = $event->file;
 
-        $zip_file = storage_path('app/public/archive/' . $file->name . '.zip');
+        $zip_file = storage_path('app/public/' . $file->name . $file->zip_folder);
+
 
         $zip = new Filesystem(new ZipArchiveAdapter(($zip_file)));
 
