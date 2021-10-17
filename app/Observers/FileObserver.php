@@ -30,6 +30,7 @@ class FileObserver
     public function created(File $file)
     {
         event(new FileCreated($file));
+
     }
 
     /**

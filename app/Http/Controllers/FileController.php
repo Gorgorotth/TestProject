@@ -3,13 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FileStoreRequest;
-use App\Http\Requests\FileUpdateRequest;
 use App\Http\Requests\ZipStorePasswordRequest;
 use App\Models\File;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use League\Flysystem\Filesystem;
-use League\Flysystem\ZipArchive\ZipArchiveAdapter;
-use mysql_xdevapi\Exception;
 use ZipArchive;
 
 class FileController extends Controller
@@ -37,7 +34,6 @@ class FileController extends Controller
             $path = $request->fileName . '.' . $extension;
             $filename = $request->fileName . '.' . $extension;
         }
-
 
         Storage::disk('files')->put($filename, $request->file('file')->getContent());
 
@@ -107,11 +103,17 @@ class FileController extends Controller
     }
 
     public function delete($id) {
-      $file = File::query()->firstWhere('id', $id);
 
-        $file->delete();
+        $con = require config_path('webhook.php');
 
-        return back();
+
+
+
+//      $file = File::query()->firstWhere('id', $id);
+//
+//        $file->delete();
+//
+//        return back();
     }
 //
 //    public function update(FileUpdateRequest $request, $id)

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\FileCreated;
+use App\Jobs\Webhook;
 use App\Listeners\ZipFile;
 use App\Models\File;
 use App\Observers\FileObserver;
@@ -24,6 +25,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         FileCreated::class => [
                 ZipFile::class,
+                Webhook::class,
         ]
     ];
 
