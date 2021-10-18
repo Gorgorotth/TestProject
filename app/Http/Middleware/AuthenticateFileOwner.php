@@ -19,7 +19,6 @@ class AuthenticateFileOwner
     public function handle(Request $request, Closure $next)
     {
         $file = File::query()->firstWhere('id', $request->id);
-
         if ($file && $file->user_id == auth()->id()) {
             return $next($request);
         } else {

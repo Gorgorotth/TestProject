@@ -47,23 +47,16 @@ class Webhook implements ShouldQueue
     public function handle(FileCreated $event)
     {
         $file = $event->file;
-
         $config = config('webhook');
-
         $environment = env('APP_ENV');
-
         if ($environment == 'local' || $environment == 'production') {
             $type = $config['payload_type'];
-
             $endpoints = $config[$environment]['endpoints'];
-
             if ($type == 'xml') {
                 $headers = [
                     'Content-Type' => 'text/xml; charset=UTF8'
                 ];
-
                 $body = $this->typeXml($file);
-
                 foreach ($endpoints as $url) {
                     Http::withHeaders($headers)->post($url, [
                         'body' => $body
@@ -73,9 +66,7 @@ class Webhook implements ShouldQueue
                 $headers = [
                     'Content-Type' => 'application/json; charset=UTF8'
                 ];
-
                 $body = $file->file_path;
-
                 foreach ($endpoints as $url) {
                     Http::withHeaders($headers)->post($url, [
                         'file_url' => $body

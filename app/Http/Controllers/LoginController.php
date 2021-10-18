@@ -20,13 +20,11 @@ class LoginController extends Controller
         if (! auth()->attempt($request->except('_token'))) {
             return back()->withInput()->withErrors(['password' => 'Wrong email or password']);
         }
-
         return redirect(route('file.index'))->with('success', 'Logged in successfully');
     }
     public function destroy()
     {
         auth()->logout();
-
         return redirect('/')->with('success', 'Logged out');
     }
 }

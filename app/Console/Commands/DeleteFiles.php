@@ -43,12 +43,9 @@ class DeleteFiles extends Command
 
         foreach ($files as $file) {
             $file->forceDelete();
-
             Storage::disk('files')->delete($file->name);
-
             Storage::disk('archives')->delete($file->zip_folder);
         }
-
         return 0;
     }
 }

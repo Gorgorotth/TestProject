@@ -6,17 +6,16 @@ use App\Http\Requests\FileStoreRequest;
 use App\Http\Requests\FileUpdateRequest;
 use App\Http\Requests\ZipStorePasswordRequest;
 use App\Models\File;
-use App\Services\File\{
-    DeleteService,
-    DownloadService,
-    StoreService,
-    StorePasswordService,
-    UpdateService
-};
-use Mockery\Exception;
+use App\Services\FileService;
+
 
 class FileController extends Controller
 {
+    public function __construct(FileService $service)
+    {
+        $this->service = $service;
+    }
+
     public function index()
     {
         return view('file.index', [
@@ -32,12 +31,9 @@ class FileController extends Controller
     public function store(FileStoreRequest $request)
     {
         try {
-            $service = new StoreService();
-
-            $service->store($request);
-
+            $this->service->store($request);
             return redirect(route('file.index'))->with('success', 'You added new file');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect(route('file.index'))->with('error', 'Something went wrong');
         }
     }
@@ -46,7 +42,6 @@ class FileController extends Controller
     public function edit($id)
     {
         $file = File::firstWhere('id', $id);
-
         return view('file.edit-zip', [
             'id' => $id,
             'file' => $file,
@@ -56,7 +51,6 @@ class FileController extends Controller
     public function edit_file($id)
     {
         $file = File::firstWhere('id', $id);
-
         return view('file.edit', [
             'file' => $file
         ]);
@@ -65,12 +59,9 @@ class FileController extends Controller
     public function store_password(ZipStorePasswordRequest $request, $id)
     {
         try {
-            $service = new StorePasswordService();
-
-            $service->store_password($request, $id);
-
+            $this->service->store_password($request, $id);
             return redirect(route('file.index'))->with('success', 'You added a password');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect(route('file.index'))->with('error', 'Something went wrong');
         }
     }
@@ -78,10 +69,9 @@ class FileController extends Controller
     public function download($id)
     {
         try {
-            $service = new DownloadService();
-
-            return $service->download($id);
-        } catch (Exception $e){
+            $service = $this->service->download($id);
+            return response()->download($service['zip_file'], $service['file'], $service['headers']);;
+        } catch (\Exception $e) {
             return redirect(route('file.index'))->with('error', 'Something went wrong');
         }
     }
@@ -89,12 +79,9 @@ class FileController extends Controller
     public function delete($id)
     {
         try {
-            $service = new DeleteService();
-
-            $service->delete($id);
-
+            $this->service->delete($id);
             return back()->with('success', 'File is deleted');
-        } catch (Exception $e){
+        } catch (\Exception $e) {
             return redirect('file.index')->with('error', 'Something went wrong');
         }
     }
@@ -103,14 +90,10 @@ class FileController extends Controller
     public function update(FileUpdateRequest $request, $id)
     {
         try {
-            $service = new UpdateService();
-
-            $service->update($request, $id);
-
+            $this->service->update($request, $id);
             return redirect(route('file.index'))->with('success', 'You renamed a file');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect(route('file.index'))->with('error', 'Name already exist, choose another one');
         }
     }
-
 }

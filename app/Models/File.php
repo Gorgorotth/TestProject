@@ -34,5 +34,4 @@ class File extends Model
     {
         return $this->name . '.zip';
     }
-
 }
