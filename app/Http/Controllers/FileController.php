@@ -43,7 +43,7 @@ class FileController extends Controller
             'name' => $path,
         ]);
 
-        return redirect('/file')->with('success', 'You added new file');
+        return redirect(route('file.index'))->with('success', 'You added new file');
     }
 
 
@@ -85,10 +85,10 @@ class FileController extends Controller
                 $zip->close();
 
 
-                return redirect('/file')->with('success', 'You added a password');
+                return redirect(route('file.index'))->with('success', 'You added a password');
             }
         } catch (\Exception $e){
-            return redirect('/file')->with('error', 'Something went wrong');
+            return redirect(route('file.index'))->with('error', 'Something went wrong');
         }
 
 
@@ -101,7 +101,7 @@ class FileController extends Controller
         $zip_file = storage_path('app/public/' . $file->zip_folder);
         if (!file_exists($zip_file)) {
 
-            return redirect('/file')->with('error','file not found');
+            return redirect(route('file.index'))->with('error','file not found');
 
         } else {
 
@@ -145,7 +145,7 @@ class FileController extends Controller
                 'name' => $fileName . '.' . $extension,
             ]);
         }
-        return redirect('/file')->with('success', 'You renamed a file');
+        return redirect(route('file.index'))->with('success', 'You renamed a file');
 
     }
 

@@ -13,7 +13,7 @@ Route::get('logout', [LoginController::class, 'destroy'])->name('logout');
 
 Route::group(['middleware' => ['auth']], function () {
 
-    Route::get('file', [FileController::class, 'index']);
+    Route::get('file', [FileController::class, 'index'])->name('file.index');
 
     Route::get('file/create', [FileController::class, 'create'])->name('file.create');
 
