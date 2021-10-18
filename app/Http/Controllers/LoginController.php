@@ -17,8 +17,7 @@ class LoginController extends Controller
 
     public function store(LoginStoreRequest $request)
     {
-        if (! auth()->attempt($request->except('_token')))
-        {
+        if (! auth()->attempt($request->except('_token'))) {
             return back()->withInput()->withErrors(['password' => 'Wrong email or password']);
         }
 
@@ -27,6 +26,7 @@ class LoginController extends Controller
     public function destroy()
     {
         auth()->logout();
+
         return redirect('/')->with('success', 'Logged out');
     }
 }

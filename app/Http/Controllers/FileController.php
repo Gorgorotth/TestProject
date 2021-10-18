@@ -6,8 +6,14 @@ use App\Http\Requests\FileStoreRequest;
 use App\Http\Requests\FileUpdateRequest;
 use App\Http\Requests\ZipStorePasswordRequest;
 use App\Models\File;
-use Illuminate\Support\Facades\Storage;
-use ZipArchive;
+use App\Services\File\{
+    DeleteService,
+    DownloadService,
+    StoreService,
+    StorePasswordService,
+    UpdateService
+};
+use Mockery\Exception;
 
 class FileController extends Controller
 {
@@ -25,26 +31,15 @@ class FileController extends Controller
 
     public function store(FileStoreRequest $request)
     {
-        $filename = ($request->file('file')->getClientOriginalName());
+        try {
+            $service = new StoreService();
 
-        if (!$request->fileName) {
-            $path = $filename;
-        } else {
-            $extension = pathinfo($filename, PATHINFO_EXTENSION);
+            $service->store($request);
 
-            $path = $request->fileName . '.' . $extension;
-
-            $filename = $request->fileName . '.' . $extension;
+            return redirect(route('file.index'))->with('success', 'You added new file');
+        } catch (Exception $e) {
+            return redirect(route('file.index'))->with('error', 'Something went wrong');
         }
-
-        Storage::disk('files')->put($filename, $request->file('file')->getContent());
-
-        File::create([
-            'user_id' => auth()->id(),
-            'name' => $path,
-        ]);
-
-        return redirect(route('file.index'))->with('success', 'You added new file');
     }
 
 
@@ -69,79 +64,52 @@ class FileController extends Controller
 
     public function store_password(ZipStorePasswordRequest $request, $id)
     {
-        $password = $request->password;
-
-        $file = File::firstWhere('id', $id);
-
-        $zip = new ZipArchive();
-
-        $zip_file = Storage::disk('archives')->path($file->zip_folder);
-
         try {
-            $zip_status = $zip->open($zip_file, ZipArchive::CREATE);
+            $service = new StorePasswordService();
 
-            $zip->setPassword($password);
+            $service->store_password($request, $id);
 
-
-            if ($zip_status === true) {
-                $zip->setEncryptionName($file->name, ZipArchive::EM_AES_256, $password);
-
-                $zip->close();
-
-                return redirect(route('file.index'))->with('success', 'You added a password');
-            }
-        } catch (\Exception $e) {
+            return redirect(route('file.index'))->with('success', 'You added a password');
+        } catch (Exception $e) {
             return redirect(route('file.index'))->with('error', 'Something went wrong');
         }
     }
 
     public function download($id)
     {
-        $file = File::firstWhere('id', $id);
+        try {
+            $service = new DownloadService();
 
-        $zip_file = Storage::disk('archives')->path($file->zip_folder);
-
-        if (!file_exists($zip_file)) {
-            return redirect(route('file.index'))->with('error', 'file not found');
-        } else {
-            $headers = [
-                "Content-Type: application/zip",
-            ];
-
-            return response()->download($zip_file, $file->zip_folder, $headers);
+            return $service->download($id);
+        } catch (Exception $e){
+            return redirect(route('file.index'))->with('error', 'Something went wrong');
         }
     }
 
     public function delete($id)
     {
-        $file = File::firstWhere('id', $id);
+        try {
+            $service = new DeleteService();
 
-        $file->delete();
+            $service->delete($id);
 
-        return back()->with('success', 'File is deleted');
+            return back()->with('success', 'File is deleted');
+        } catch (Exception $e){
+            return redirect('file.index')->with('error', 'Something went wrong');
+        }
     }
 
 
     public function update(FileUpdateRequest $request, $id)
     {
-        $file = File::firstWhere('id', $id);
+        try {
+            $service = new UpdateService();
 
-        $extension = pathinfo($file->name, PATHINFO_EXTENSION);
+            $service->update($request, $id);
 
-        if ($fileName = $request->name) {
-            try {
-                Storage::disk('files')->move($file->name, $fileName . '.' . $extension);
-
-                Storage::disk('archives')->move($file->zip_folder, $fileName . '.' . $extension . '.zip');
-
-                $file->update([
-                    'name' => $fileName . '.' . $extension,
-                ]);
-
-                return redirect(route('file.index'))->with('success', 'You renamed a file');
-            } catch (\Exception $e) {
-                return redirect(route('file.index'))->with('error', 'Name already exist, choose another one');
-            }
+            return redirect(route('file.index'))->with('success', 'You renamed a file');
+        } catch (Exception $e) {
+            return redirect(route('file.index'))->with('error', 'Name already exist, choose another one');
         }
     }
 
