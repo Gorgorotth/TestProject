@@ -4,14 +4,10 @@
         <label>{{$file->name}}</label>
         <form method="POST" action="{{route('file.update', ['id' => $file->id])}}" class="mt-10">
             @csrf
-
-            <x-form.input name="name" />
-
+            <x-form.input name="name"/>
             <div class="text-center">
                 <button type="submit" class="bg-blue-500 text-white rounded my-2 py-2 px-8">Rename</button>
             </div>
-
-
         </form>
     </div>
 </x-layout>

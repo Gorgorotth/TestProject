@@ -37,7 +37,7 @@ class FileService
         $zip->close();
     }
 
-    public function download($id)
+    public function download($id): array
     {
         $file = File::firstWhere('id', $id);
         $zip_file = Storage::disk('archives')->path($file->zip_folder);

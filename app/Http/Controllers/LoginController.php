@@ -6,6 +6,9 @@ use App\Http\Requests\LoginStoreRequest;
 
 class LoginController extends Controller
 {
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function index()
     {
         if (auth()->user()) {
@@ -15,6 +18,10 @@ class LoginController extends Controller
         }
     }
 
+    /**
+     * @param LoginStoreRequest $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function store(LoginStoreRequest $request)
     {
         if (!auth()->attempt($request->except('_token'))) {
@@ -23,6 +30,9 @@ class LoginController extends Controller
         return redirect(route('file.index'))->with('success', 'Logged in successfully');
     }
 
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function destroy()
     {
         auth()->logout();

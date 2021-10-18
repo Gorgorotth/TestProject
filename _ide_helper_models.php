@@ -12,8 +12,44 @@
 
 namespace App\Models{
 /**
+ * App\Models\User
+ *
+ * @mixin IdeHelperUser
+ * @property int $id
+ * @property string $name
+ * @property string $username
+ * @property string $email
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property string $password
+ * @property string|null $file
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Database\Factories\UserFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereFile($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUsername($value)
+ */
+    class IdeHelperUser extends \Eloquent {}
+
+/**
  * App\Models\File
  *
+ * @mixin IdeHelperFile
  * @property int $id
  * @property int $user_id
  * @property string $name
@@ -22,8 +58,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User $author
- * @property-read mixed $file_path
- * @property-read mixed $zip_folder
+ * @property-read string $file_path
+ * @property-read string $zip_folder
  * @method static \Database\Factories\FileFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|File newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|File newQuery()
@@ -38,7 +74,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|File whereZipped($value)
  * @method static \Illuminate\Database\Query\Builder|File withTrashed()
  * @method static \Illuminate\Database\Query\Builder|File withoutTrashed()
- * @mixin \Eloquent
  */
 	class IdeHelperFile extends \Eloquent {}
 }

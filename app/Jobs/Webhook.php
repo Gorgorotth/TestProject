@@ -25,20 +25,6 @@ class Webhook implements ShouldQueue
         //
     }
 
-    public function typeXml($file)
-    {
-        $path = $file->file_path;
-        return '
-                <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
-                    <Body>
-                        <FileUrl>
-                            ' . $path . '
-                        </FileUrl>
-                    </Body>
-                </Envelope>
-        ';
-    }
-
     /**
      * Execute the job.
      *
@@ -74,5 +60,23 @@ class Webhook implements ShouldQueue
                 }
             }
         }
+    }
+
+    /**
+     * @param $file
+     * @return string
+     */
+    public function typeXml($file): string
+    {
+        $path = $file->file_path;
+        return '
+                <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+                    <Body>
+                        <FileUrl>
+                            ' . $path . '
+                        </FileUrl>
+                    </Body>
+                </Envelope>
+        ';
     }
 }

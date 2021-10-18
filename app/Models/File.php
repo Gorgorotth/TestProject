@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class File extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -20,17 +20,26 @@ class File extends Model
         'user_id',
     ];
 
-    public function author()
+    /**
+     * @return object
+     */
+    public function author(): object
     {
         return $this->belongsTo(User::class);
     }
 
-    public function getFilePathAttribute()
+    /**
+     * @return string
+     */
+    public function getFilePathAttribute(): string
     {
         return Storage::disk('files')->url($this->name);
     }
 
-    public function getZipFolderAttribute()
+    /**
+     * @return string
+     */
+    public function getZipFolderAttribute(): string
     {
         return $this->name . '.zip';
     }

@@ -5,7 +5,6 @@ namespace App\Observers;
 use App\Events\FileCreated;
 use App\Models\File;
 
-
 class FileObserver
 {
     public $afterCommit = true;
