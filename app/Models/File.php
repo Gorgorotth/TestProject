@@ -29,7 +29,7 @@ class File extends Model
 
     public function getZipFolderAttribute()
     {
-        return '.zip';
+        return $this->name . '.zip';
     }
 
 }

@@ -69,7 +69,9 @@ class FileController extends Controller
         $password = $request->password;
         $file = File::query()->firstWhere('id', $id);
         $zip = new ZipArchive();
-        $zip_file = storage_path('app/public/' . $file->name . $file->zip_folder);
+        $zip_file = storage_path('app/public/' . $file->zip_folder);
+
+        try {
 
             $zip_status = $zip->open($zip_file, ZipArchive::CREATE);
 
@@ -84,11 +86,11 @@ class FileController extends Controller
 
 
                 return redirect('/file')->with('success', 'You added a password');
-            } else {
-
-                die("Failed opening archive: " . @$zip->getStatusString() . " (code: " . $zip_status . ")");
-
             }
+        } catch (\Exception $e){
+            return redirect('/file')->with('error', 'Something went wrong');
+        }
+
 
     }
 
@@ -96,7 +98,7 @@ class FileController extends Controller
     {
         $file = File::query()->firstWhere('id', $id);
 
-        $zip_file = storage_path('app/public/' . $file->name . $file->zip_folder);
+        $zip_file = storage_path('app/public/' . $file->zip_folder);
         if (!file_exists($zip_file)) {
 
             return redirect('/file')->with('error','file not found');
@@ -105,7 +107,7 @@ class FileController extends Controller
 
             header("Cache-Control: public");
             header("Content-Description: File Transfer");
-            header("Content-Disposition: attachment; filename=$file->name$file->zip_folder");
+            header("Content-Disposition: attachment; filename=$file->zip_folder");
             header("Content-Type: application/zip");
             header("Content-Transfer-Encoding: binary");
 
@@ -137,7 +139,7 @@ class FileController extends Controller
 
             Storage::disk('files')->move($file->name, $fileName . '.' . $extension);
 
-            Storage::disk('archives')->move($file->name . $file->zip_folder, $fileName . $extension . $file->zip_folder);
+            Storage::disk('archives')->move($file->zip_folder, $fileName . $extension . '.zip');
 
             $file->update([
                 'name' => $fileName . '.' . $extension,

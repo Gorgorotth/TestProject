@@ -1,6 +1,6 @@
 <x-layout>
     <div class="max-w-lg mx-auto border border-gray-200 mt-10 bg-gray-100 p-6 rounded-xl">
-    <h1 class="font-bold text-center text-xl">Add password to your {{$file->name . $file->zip_folder}} /or download it</h1>
+    <h1 class="font-bold text-center text-xl">Add password to your {{$file->zip_folder}} /or download it</h1>
 
     <form method="POST" action="{{route('zip.setPassword', ['id' => $id])}}" class="mt-10">
         @csrf
