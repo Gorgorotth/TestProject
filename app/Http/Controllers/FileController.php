@@ -69,7 +69,7 @@ class FileController extends Controller
         $password = $request->password;
         $file = File::query()->firstWhere('id', $id);
         $zip = new ZipArchive();
-        $zip_file = storage_path('app/public/' . $file->zip_folder);
+        $zip_file = Storage::disk('archives')->path($file->zip_folder);
 
         try {
 
@@ -87,7 +87,7 @@ class FileController extends Controller
 
                 return redirect(route('file.index'))->with('success', 'You added a password');
             }
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             return redirect(route('file.index'))->with('error', 'Something went wrong');
         }
 
@@ -97,11 +97,10 @@ class FileController extends Controller
     public function download($id)
     {
         $file = File::query()->firstWhere('id', $id);
-
-        $zip_file = storage_path('app/public/' . $file->zip_folder);
+        $zip_file = Storage::disk('archives')->path($file->zip_folder);
         if (!file_exists($zip_file)) {
 
-            return redirect(route('file.index'))->with('error','file not found');
+            return redirect(route('file.index'))->with('error', 'file not found');
 
         } else {
 
@@ -137,16 +136,21 @@ class FileController extends Controller
 
         if ($fileName = $request->name) {
 
-            Storage::disk('files')->move($file->name, $fileName . '.' . $extension);
+            try {
 
-            Storage::disk('archives')->move($file->zip_folder, $fileName . $extension . '.zip');
+                Storage::disk('files')->move($file->name, $fileName . '.' . $extension);
 
-            $file->update([
-                'name' => $fileName . '.' . $extension,
-            ]);
+                Storage::disk('archives')->move($file->zip_folder, $fileName . '.' . $extension . '.zip');
+
+                $file->update([
+                    'name' => $fileName . '.' . $extension,
+                ]);
+
+                return redirect(route('file.index'))->with('success', 'You renamed a file');
+            } catch (\Exception $e) {
+                return redirect(route('file.index'))->with('error', 'Name already exist, choose another one');
+            }
         }
-        return redirect(route('file.index'))->with('success', 'You renamed a file');
-
     }
 
 }

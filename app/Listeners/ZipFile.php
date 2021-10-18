@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\FileCreated;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Filesystem;
 use League\Flysystem\ZipArchive\ZipArchiveAdapter;
 
@@ -31,7 +32,7 @@ class ZipFile implements ShouldQueue
     {
         $file = $event->file;
 
-        $zip_file = storage_path('app/public/' . $file->zip_folder);
+        $zip_file = Storage::disk('archives')->path($file->zip_folder);
 
 
         $zip = new Filesystem(new ZipArchiveAdapter(($zip_file)));
