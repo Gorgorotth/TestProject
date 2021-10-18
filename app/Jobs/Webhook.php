@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Events\FileCreated;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -28,17 +27,16 @@ class Webhook implements ShouldQueue
 
     public function typeXml($file)
     {
-
         $path = $file->file_path;
         return '
-<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
-    <Body>
-        <FileUrl>
-            ' . $path . '
-        </FileUrl>
-    </Body>
-</Envelope>
-';
+                <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+                    <Body>
+                        <FileUrl>
+                            ' . $path . '
+                        </FileUrl>
+                    </Body>
+                </Envelope>
+        ';
     }
 
     /**
@@ -55,46 +53,35 @@ class Webhook implements ShouldQueue
         $environment = env('APP_ENV');
 
         if ($environment == 'local' || $environment == 'production') {
-
             $type = $config['payload_type'];
 
             $endpoints = $config[$environment]['endpoints'];
 
             if ($type == 'xml') {
                 $headers = [
-
                     'Content-Type' => 'text/xml; charset=UTF8'
-
                 ];
+
                 $body = $this->typeXml($file);
 
                 foreach ($endpoints as $url) {
-
                     Http::withHeaders($headers)->post($url, [
-
                         'body' => $body
-
                     ]);
                 }
             } elseif ($type == 'json') {
                 $headers = [
-
                     'Content-Type' => 'application/json; charset=UTF8'
-
                 ];
+
                 $body = $file->file_path;
 
                 foreach ($endpoints as $url) {
-
                     Http::withHeaders($headers)->post($url, [
-
                         'file_url' => $body
-
                     ]);
                 }
             }
         }
-
-
     }
 }

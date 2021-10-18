@@ -23,10 +23,11 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
         FileCreated::class => [
             ZipFile::class,
             Webhook::class,
-        ]
+        ],
     ];
 
     /**
