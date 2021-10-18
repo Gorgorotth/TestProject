@@ -19,6 +19,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('file/store', [FileController::class, 'store'])->name('file.add');
 
+    Route::group(['middleware' => ['auth.owner']], function(){
+
     Route::get('zip/edit/{id}', [FileController::class, 'edit'])->name('zip.edit');
 
     Route::get('file/edit/{id}', [FileController::class, 'edit_file'])->name('file.edit');
@@ -30,5 +32,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('zip/setPassword/{id}', [FileController::class, 'store_password'])->name('zip.setPassword');
 
     Route::post('zip/download/{id}', [FileController::class, 'download'])->name('zip.download');
+    });
 
 });

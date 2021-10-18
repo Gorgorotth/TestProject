@@ -104,15 +104,11 @@ class FileController extends Controller
 
         } else {
 
-            header("Cache-Control: public");
-            header("Content-Description: File Transfer");
-            header("Content-Disposition: attachment; filename=$file->zip_folder");
-            header("Content-Type: application/zip");
-            header("Content-Transfer-Encoding: binary");
 
-            readfile($zip_file);
-
-
+            $headers = [
+                "Content-Type: application/zip",
+            ];
+            return response()->download($zip_file, $file->zip_folder, $headers);
         }
 
     }

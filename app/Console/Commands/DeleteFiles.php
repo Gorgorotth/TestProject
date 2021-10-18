@@ -40,7 +40,6 @@ class DeleteFiles extends Command
     public function handle()
     {
         $files = File::onlyTrashed()->get();
-        if (count($files) >= 1) {
 
             foreach ($files as $file) {
 
@@ -49,11 +48,8 @@ class DeleteFiles extends Command
                 Storage::disk('files')->delete($file->name);
 
                 Storage::disk('archives')->delete($file->zip_folder);
-
-
+                
             }
             return 0;
-        }
-        return 0;
     }
 }
