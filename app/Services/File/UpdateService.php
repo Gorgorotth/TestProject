@@ -13,12 +13,12 @@ class UpdateService
 
         $extension = pathinfo($file->name, PATHINFO_EXTENSION);
 
-                Storage::disk('files')->move($file->name, $request->name . '.' . $extension);
+        Storage::disk('files')->move($file->name, $request->name . '.' . $extension);
 
-                Storage::disk('archives')->move($file->zip_folder, $request->name . '.' . $extension . '.zip');
+        Storage::disk('archives')->move($file->zip_folder, $request->name . '.' . $extension . '.zip');
 
-                $file->update([
-                    'name' => $request->name . '.' . $extension,
-                ]);
+        $file->update([
+            'name' => $request->name . '.' . $extension,
+        ]);
     }
 }

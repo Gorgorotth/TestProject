@@ -41,13 +41,14 @@ class DeleteFiles extends Command
     {
         $files = File::onlyTrashed()->get();
 
-            foreach ($files as $file) {
-                $file->forceDelete();
+        foreach ($files as $file) {
+            $file->forceDelete();
 
-                Storage::disk('files')->delete($file->name);
+            Storage::disk('files')->delete($file->name);
 
-                Storage::disk('archives')->delete($file->zip_folder);
-            }
-            return 0;
+            Storage::disk('archives')->delete($file->zip_folder);
+        }
+
+        return 0;
     }
 }
