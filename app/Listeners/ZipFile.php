@@ -12,6 +12,7 @@ use League\Flysystem\ZipArchive\ZipArchiveAdapter;
 class ZipFile implements ShouldQueue
 {
     use Queueable;
+
     /**
      * Create the event listener.
      *
@@ -25,7 +26,7 @@ class ZipFile implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param FileCreated $event
      * @return void
      */
     public function handle(FileCreated $event)

@@ -8,7 +8,7 @@ class LoginController extends Controller
 {
     public function index()
     {
-        if (auth()->user()){
+        if (auth()->user()) {
             return redirect(route('file.index'));
         } else {
             return view('index');
@@ -17,11 +17,12 @@ class LoginController extends Controller
 
     public function store(LoginStoreRequest $request)
     {
-        if (! auth()->attempt($request->except('_token'))) {
+        if (!auth()->attempt($request->except('_token'))) {
             return back()->withInput()->withErrors(['password' => 'Wrong email or password']);
         }
         return redirect(route('file.index'))->with('success', 'Logged in successfully');
     }
+
     public function destroy()
     {
         auth()->logout();

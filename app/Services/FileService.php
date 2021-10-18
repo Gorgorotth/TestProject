@@ -25,7 +25,7 @@ class FileService
         ]);
     }
 
-    public function store_password($request, $id)
+    public function storePassword($request, $id)
     {
         $password = $request->password;
         $file = File::firstWhere('id', $id);

@@ -8,14 +8,24 @@ use App\Http\Requests\ZipStorePasswordRequest;
 use App\Models\File;
 use App\Services\FileService;
 
-
 class FileController extends Controller
 {
-    public function __construct(FileService $service)
+    /**
+     * @var FileService
+     */
+    public $fileService;
+
+    /**
+     * @param FileService $fileService
+     */
+    public function __construct(FileService $fileService)
     {
-        $this->service = $service;
+        $this->fileService = $fileService;
     }
 
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function index()
     {
         return view('file.index', [
@@ -23,15 +33,22 @@ class FileController extends Controller
         ]);
     }
 
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function create()
     {
         return view('file.create');
     }
 
+    /**
+     * @param FileStoreRequest $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function store(FileStoreRequest $request)
     {
         try {
-            $this->service->store($request);
+            $this->fileService->store($request);
             return redirect(route('file.index'))->with('success', 'You added new file');
         } catch (\Exception $e) {
             return redirect(route('file.index'))->with('error', 'Something went wrong');
@@ -39,6 +56,10 @@ class FileController extends Controller
     }
 
 
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function edit($id)
     {
         $file = File::firstWhere('id', $id);
@@ -48,7 +69,11 @@ class FileController extends Controller
         ]);
     }
 
-    public function edit_file($id)
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function editFile($id)
     {
         $file = File::firstWhere('id', $id);
         return view('file.edit', [
@@ -56,30 +81,43 @@ class FileController extends Controller
         ]);
     }
 
-    public function store_password(ZipStorePasswordRequest $request, $id)
+    /**
+     * @param ZipStorePasswordRequest $request
+     * @param $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function storePassword(ZipStorePasswordRequest $request, $id)
     {
         try {
-            $this->service->store_password($request, $id);
+            $this->fileService->storePassword($request, $id);
             return redirect(route('file.index'))->with('success', 'You added a password');
         } catch (\Exception $e) {
             return redirect(route('file.index'))->with('error', 'Something went wrong');
         }
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function download($id)
     {
         try {
-            $service = $this->service->download($id);
-            return response()->download($service['zip_file'], $service['file'], $service['headers']);;
+            $service = $this->fileService->download($id);
+            return response()->download($service['zip_file'], $service['file'], $service['headers']);
         } catch (\Exception $e) {
             return redirect(route('file.index'))->with('error', 'Something went wrong');
         }
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function delete($id)
     {
         try {
-            $this->service->delete($id);
+            $this->fileService->delete($id);
             return back()->with('success', 'File is deleted');
         } catch (\Exception $e) {
             return redirect('file.index')->with('error', 'Something went wrong');
@@ -87,10 +125,15 @@ class FileController extends Controller
     }
 
 
+    /**
+     * @param FileUpdateRequest $request
+     * @param $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function update(FileUpdateRequest $request, $id)
     {
         try {
-            $this->service->update($request, $id);
+            $this->fileService->update($request, $id);
             return redirect(route('file.index'))->with('success', 'You renamed a file');
         } catch (\Exception $e) {
             return redirect(route('file.index'))->with('error', 'Name already exist, choose another one');
