@@ -21,9 +21,9 @@ class File extends Model
     ];
 
     /**
-     * @return object
+     * @return mixed
      */
-    public function author(): object
+    public function author()
     {
         return $this->belongsTo(User::class);
     }

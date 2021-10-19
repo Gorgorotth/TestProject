@@ -53,9 +53,9 @@ class User extends Authenticatable
     }
 
     /**
-     * @return object
+     * @return mixed
      */
-    protected function files(): object
+    protected function files()
     {
         return $this->hasMany(File::class);
     }

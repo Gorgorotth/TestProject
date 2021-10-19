@@ -8,6 +8,9 @@ use ZipArchive;
 
 class FileService
 {
+    /**
+     * @param $request
+     */
     public function store($request)
     {
         $filename = ($request->file('file')->getClientOriginalName());
@@ -25,6 +28,10 @@ class FileService
         ]);
     }
 
+    /**
+     * @param $request
+     * @param $id
+     */
     public function storePassword($request, $id)
     {
         $password = $request->password;
@@ -37,9 +44,13 @@ class FileService
         $zip->close();
     }
 
+    /**
+     * @param $id
+     * @return array
+     */
     public function download($id): array
     {
-        $file = File::firstWhere('id', $id);
+        $file = File::find($id);
         $zip_file = Storage::disk('archives')->path($file->zip_folder);
         $headers = [
             "Content-Type: application/zip",
@@ -47,12 +58,19 @@ class FileService
         return ['zip_file' => $zip_file, 'file' => $file->zip_folder, 'headers' => $headers];
     }
 
+    /**
+     * @param $id
+     */
     public function delete($id)
     {
         $file = File::firstWhere('id', $id);
         $file->delete();
     }
 
+    /**
+     * @param $request
+     * @param $id
+     */
     public function update($request, $id)
     {
         $file = File::firstWhere('id', $id);

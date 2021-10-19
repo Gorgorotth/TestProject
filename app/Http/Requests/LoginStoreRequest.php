@@ -7,7 +7,6 @@ use Illuminate\Validation\Rule;
 
 class LoginStoreRequest extends FormRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
