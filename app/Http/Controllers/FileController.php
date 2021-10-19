@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FileStoreRequest;
 use App\Http\Requests\FileUpdateRequest;
 use App\Http\Requests\ZipStorePasswordRequest;
-use App\Models\File;
 use App\Services\FileService;
 
 class FileController extends Controller
@@ -29,7 +28,7 @@ class FileController extends Controller
     public function index()
     {
         return view('file.index', [
-            'files' => File::latest()->where('user_id', auth()->id())->get(),
+            'files' => $this->fileService->getFiles(),
         ]);
     }
 
@@ -55,17 +54,15 @@ class FileController extends Controller
         }
     }
 
-
     /**
      * @param $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function edit($id)
     {
-        $file = File::firstWhere('id', $id);
         return view('file.edit-zip', [
             'id' => $id,
-            'file' => $file,
+            'file' => $this->fileService->getFile($id),
         ]);
     }
 
@@ -75,9 +72,8 @@ class FileController extends Controller
      */
     public function editFile($id)
     {
-        $file = File::firstWhere('id', $id);
         return view('file.edit', [
-            'file' => $file
+            'file' => $this->fileService->getFile($id),
         ]);
     }
 
@@ -123,7 +119,6 @@ class FileController extends Controller
             return redirect('file.index')->with('error', 'Something went wrong');
         }
     }
-
 
     /**
      * @param FileUpdateRequest $request

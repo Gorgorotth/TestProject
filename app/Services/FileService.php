@@ -3,11 +3,20 @@
 namespace App\Services;
 
 use App\Models\File;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
 
 class FileService
 {
+    /**
+     * @return Collection
+     */
+    public function getFiles(): Collection
+    {
+        return File::latest()->where('user_id', auth()->id())->get();
+    }
+
     /**
      * @param $request
      */
@@ -35,7 +44,7 @@ class FileService
     public function storePassword($request, $id)
     {
         $password = $request->password;
-        $file = File::firstWhere('id', $id);
+        $file = $this->getFile($id);
         $zip = new ZipArchive();
         $zip_file = Storage::disk('archives')->path($file->zip_folder);
         $zip->open($zip_file, ZipArchive::CREATE);
@@ -46,11 +55,20 @@ class FileService
 
     /**
      * @param $id
+     * @return File
+     */
+    public function getFile($id): ?File
+    {
+        return File::find($id);
+    }
+
+    /**
+     * @param $id
      * @return array
      */
     public function download($id): array
     {
-        $file = File::find($id);
+        $file = $this->getFile($id);
         $zip_file = Storage::disk('archives')->path($file->zip_folder);
         $headers = [
             "Content-Type: application/zip",
@@ -63,7 +81,7 @@ class FileService
      */
     public function delete($id)
     {
-        $file = File::firstWhere('id', $id);
+        $file = $this->getFile($id);
         $file->delete();
     }
 
@@ -73,7 +91,7 @@ class FileService
      */
     public function update($request, $id)
     {
-        $file = File::firstWhere('id', $id);
+        $file = $this->getFile($id);
         $extension = pathinfo($file->name, PATHINFO_EXTENSION);
         Storage::disk('files')->move($file->name, $request->name . '.' . $extension);
         Storage::disk('archives')->move($file->zip_folder, $request->name . '.' . $extension . '.zip');
