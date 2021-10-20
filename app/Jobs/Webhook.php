@@ -3,12 +3,14 @@
 namespace App\Jobs;
 
 use App\Events\FileCreated;
+use App\Services\HttpRequest;
+use App\Services\JsonType;
+use App\Services\XmlType;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
 
 class Webhook implements ShouldQueue
 {
@@ -34,48 +36,15 @@ class Webhook implements ShouldQueue
         $file = $event->file;
         $config = config('webhook');
         $environment = env('APP_ENV');
-        if ($environment == 'local' || $environment == 'production') {
-            $type = $config['payload_type'];
-            $endpoints = $config[$environment]['endpoints'];
-            if ($type == 'xml') {
-                $headers = [
-                    'Content-Type' => 'text/xml; charset=UTF8'
-                ];
-                $body = $this->typeXml($file);
-                foreach ($endpoints as $url) {
-                    Http::withHeaders($headers)->post($url, [
-                        'body' => $body
-                    ]);
-                }
-            } elseif ($type == 'json') {
-                $headers = [
-                    'Content-Type' => 'application/json; charset=UTF8'
-                ];
-                $body = $file->file_path;
-                foreach ($endpoints as $url) {
-                    Http::withHeaders($headers)->post($url, [
-                        'file_url' => $body
-                    ]);
-                }
+        $endpoints = $config[$environment]['endpoints'] ?? [];
+        foreach ($endpoints as $url) {
+            if($config['payload_type'] == 'xml') {
+                $type = new XmlType(['FileUrl' => $file->file_path]);
+            }else {
+                $type = new JsonType(['file_url' => $file->file_path]);
             }
+            $service = new HttpRequest($type, $url);
+            $service->post();
         }
-    }
-
-    /**
-     * @param $file
-     * @return string
-     */
-    public function typeXml($file): string
-    {
-        $path = $file->file_path;
-        return '
-                <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
-                    <Body>
-                        <FileUrl>
-                            ' . $path . '
-                        </FileUrl>
-                    </Body>
-                </Envelope>
-        ';
     }
 }
